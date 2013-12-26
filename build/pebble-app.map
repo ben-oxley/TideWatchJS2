@@ -17,6 +17,8 @@ Discarded input sections
  .jcr           0x0000000000000000        0x0 /Users/ben/pebble-dev/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtbegin.o
  .text          0x0000000000000000        0x0 src/weather.c.11.o
  .bss           0x0000000000000000        0x0 src/weather.c.11.o
+ .rodata.FEET_TO_MM
+                0x0000000000000000        0x4 src/weather.c.11.o
  .text          0x0000000000000000        0x0 appinfo.auto.c.11.o
  .bss           0x0000000000000000        0x0 appinfo.auto.c.11.o
  .bss           0x0000000000000000        0x0 /Users/ben/pebble-dev/PebbleSDK-2.0-BETA4/Pebble/lib/libpebble.a(tmp9Q2g01pebble.o)
@@ -586,7 +588,7 @@ LOAD /Users/ben/pebble-dev/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb
  .pbl_header    0x0000000000000000       0x82 appinfo.auto.c.11.o
                 0x0000000000000000                __pbl_app_info
 
-.text           0x0000000000000084      0x503
+.text           0x0000000000000084      0x504
  *(.text)
  .text          0x0000000000000084       0x14 /Users/ben/pebble-dev/PebbleSDK-2.0-BETA4/Pebble/lib/libpebble.a(tmp9Q2g01pebble.o)
  *(.text.*)
@@ -701,10 +703,11 @@ LOAD /Users/ben/pebble-dev/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb
  *(.rodata)
  .rodata        0x0000000000000508       0x18 src/weather.c.11.o
  *(.rodata*)
- .rodata.WEATHER_ICONS
-                0x0000000000000520       0x10 src/weather.c.11.o
  .rodata.str1.1
-                0x0000000000000530       0x57 src/weather.c.11.o
+                0x0000000000000520       0x57 src/weather.c.11.o
+ *fill*         0x0000000000000577        0x1 00
+ .rodata.WEATHER_ICONS
+                0x0000000000000578       0x10 src/weather.c.11.o
 
 .glue_7         0x0000000000000588        0x0
  .glue_7        0x0000000000000000        0x0 linker stubs
@@ -792,17 +795,17 @@ OUTPUT(/Users/ben/pebble-dev/PebbleSDK-2.0-BETA4/Examples/pebblekit-js/TideWatch
  .debug_line    0x0000000000000282      0x10c appinfo.auto.c.11.o
  .debug_line    0x000000000000038e       0x75 /Users/ben/pebble-dev/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtn.o
 
-.debug_info     0x0000000000000000      0xf46
+.debug_info     0x0000000000000000      0xf58
  .debug_info    0x0000000000000000       0xb2 /Users/ben/pebble-dev/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
- .debug_info    0x00000000000000b2      0xaa7 src/weather.c.11.o
- .debug_info    0x0000000000000b59      0x33b appinfo.auto.c.11.o
- .debug_info    0x0000000000000e94       0xb2 /Users/ben/pebble-dev/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtn.o
+ .debug_info    0x00000000000000b2      0xab9 src/weather.c.11.o
+ .debug_info    0x0000000000000b6b      0x33b appinfo.auto.c.11.o
+ .debug_info    0x0000000000000ea6       0xb2 /Users/ben/pebble-dev/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtn.o
 
-.debug_abbrev   0x0000000000000000      0x302
+.debug_abbrev   0x0000000000000000      0x313
  .debug_abbrev  0x0000000000000000       0x12 /Users/ben/pebble-dev/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crti.o
- .debug_abbrev  0x0000000000000012      0x22f src/weather.c.11.o
- .debug_abbrev  0x0000000000000241       0xaf appinfo.auto.c.11.o
- .debug_abbrev  0x00000000000002f0       0x12 /Users/ben/pebble-dev/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtn.o
+ .debug_abbrev  0x0000000000000012      0x240 src/weather.c.11.o
+ .debug_abbrev  0x0000000000000252       0xaf appinfo.auto.c.11.o
+ .debug_abbrev  0x0000000000000301       0x12 /Users/ben/pebble-dev/arm-cs-tools/bin/../lib/gcc/arm-none-eabi/4.6.3/thumb2/crtn.o
 
 .debug_aranges  0x0000000000000000       0x90
  .debug_aranges
@@ -820,10 +823,10 @@ OUTPUT(/Users/ben/pebble-dev/PebbleSDK-2.0-BETA4/Examples/pebblekit-js/TideWatch
 .debug_loc      0x0000000000000000      0x1da
  .debug_loc     0x0000000000000000      0x1da src/weather.c.11.o
 
-.debug_str      0x0000000000000000      0x89a
- .debug_str     0x0000000000000000      0x744 src/weather.c.11.o
-                                        0x7f6 (size before relaxing)
- .debug_str     0x0000000000000744      0x156 appinfo.auto.c.11.o
+.debug_str      0x0000000000000000      0x89e
+ .debug_str     0x0000000000000000      0x748 src/weather.c.11.o
+                                        0x7fa (size before relaxing)
+ .debug_str     0x0000000000000748      0x156 appinfo.auto.c.11.o
                                         0x2f5 (size before relaxing)
 
 .debug_frame    0x0000000000000000       0xa0

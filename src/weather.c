@@ -10,9 +10,11 @@ static GBitmap *icon_bitmap = NULL;
 static AppSync sync;
 static uint8_t sync_buffer[64];
 
+const uint32_t FEET_TO_MM = 305;
+
 enum WeatherKey {
-  WEATHER_ICON_KEY = 0x0,         // TUPLE_INT
-  WEATHER_TEMPERATURE_KEY = 0x1,  // TUPLE_CSTRING
+  WEATHER_TIME_KEY = 0x0,         // TUPLE_INT
+  WEATHER_TIDE_KEY = 0x1,         // TUPLE_CSTRING
   WEATHER_CITY_KEY = 0x2,         // TUPLE_CSTRING
 };
 
@@ -29,7 +31,7 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
 
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
   switch (key) {
-    case WEATHER_ICON_KEY:
+    case WEATHER_TIME_KEY:
       if (icon_bitmap) {
         gbitmap_destroy(icon_bitmap);
       }
@@ -37,7 +39,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       bitmap_layer_set_bitmap(icon_layer, icon_bitmap);
       break;
 
-    case WEATHER_TEMPERATURE_KEY:
+    case WEATHER_TIDE_KEY:
       // App Sync keeps new_tuple in sync_buffer, so we may use it directly
       text_layer_set_text(temperature_layer, new_tuple->value->cstring);
       break;
@@ -85,8 +87,8 @@ static void window_load(Window *window) {
   layer_add_child(window_layer, text_layer_get_layer(city_layer));
 
   Tuplet initial_values[] = {
-    TupletInteger(WEATHER_ICON_KEY, (uint8_t) 1),
-    TupletCString(WEATHER_TEMPERATURE_KEY, "1234\u00B0C"),
+    TupletInteger(WEATHER_TIME_KEY, (uint8_t) 1),
+    TupletCString(WEATHER_TIDE_KEY, "1234\u00B0C"),
     TupletCString(WEATHER_CITY_KEY, "St Pebblesburg"),
   };
 

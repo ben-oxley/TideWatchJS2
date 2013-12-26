@@ -10,12 +10,13 @@ function fetchWeather(latitude, longitude) {
         console.log(req.responseText);
         response = JSON.parse(req.responseText);
         var tideHeight, timeNow, city;
-        var i;
+        var i, j;
         if (response && response.tide.tideSummary && response.tide.tideSummary.length > 0) {
           for (i = 0; i < response.tide.tideSummary.length; i++) {
             var weatherResult = response.tide.tideSummary[i];
             tideHeight = weatherResult.data.height;
-            timeNow = weatherResult.utcdate.epoch;
+            timeNow = Math.int(weatherResult.utcdate.epoch);
+            timeNow = "1";
             city = weatherResult.date.tzname;
             if (tideHeight != "") {
               console.log(tideHeight);
