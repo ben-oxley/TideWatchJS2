@@ -1,39 +1,31 @@
-
-function iconFromWeatherId(weatherId) {
-  if (weatherId < 600) {
-    return 2;
-  } else if (weatherId < 700) {
-    return 3;
-  } else if (weatherId > 800) {
-    return 1;
-  } else {
-    return 0;
-  }
-}
-
 function fetchWeather(latitude, longitude) {
   var response;
   var req = new XMLHttpRequest();
-  req.open('GET', "http://api.openweathermap.org/data/2.1/find/city?" +
-    "lat=" + latitude + "&lon=" + longitude + "&cnt=1", true);
+  //http://api.wunderground.com/api/f6d48f234e3e919c/tide/q/CA/San_Francisco.json
+  req.open('GET', "http://api.wunderground.com/api/f6d48f234e3e919c/tide/q/"
+  + latitude + "," + longitude + ".json", true); //CA/San_Francisco
   req.onload = function(e) {
     if (req.readyState == 4) {
       if(req.status == 200) {
         console.log(req.responseText);
         response = JSON.parse(req.responseText);
-        var temperature, icon, city;
-        if (response && response.list && response.list.length > 0) {
-          var weatherResult = response.list[0];
-          temperature = Math.round(weatherResult.main.temp - 273.15);
-          icon = iconFromWeatherId(weatherResult.weather[0].id);
-          city = weatherResult.name;
-          console.log(temperature);
-          console.log(icon);
-          console.log(city);
-          Pebble.sendAppMessage({
-            "icon":icon,
-            "temperature":temperature + "\u00B0C",
-            "city":city});
+        var tideHeight, timeNow, city;
+        var i;
+        if (response && response.tide.tideSummary && response.tide.tideSummary.length > 0) {
+          for (i = 0; i < response.tide.tideSummary.length; i++) {
+            var weatherResult = response.tide.tideSummary[i];
+            tideHeight = weatherResult.data.height;
+            timeNow = weatherResult.utcdate.epoch;
+            city = weatherResult.date.tzname;
+            if (tideHeight != "") {
+              console.log(tideHeight);
+              console.log(timeNow);
+              console.log(city);
+              Pebble.sendAppMessage({
+                "timeNow":timeNow,
+                "tideHeight":tideHeight + "\u00B0C",
+                "city":city});
+          }
         }
 
       } else {
@@ -53,7 +45,7 @@ function locationError(err) {
   console.warn('location error (' + err.code + '): ' + err.message);
   Pebble.sendAppMessage({
     "city":"Loc Unavailable",
-    "temperature":"N/A"
+    "tideHeight":"N/A"
   });
 }
 

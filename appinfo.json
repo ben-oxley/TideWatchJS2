@@ -10,8 +10,8 @@
   },
   "appKeys": {
     "city": 2,
-    "temperature": 1,
-    "icon": 0
+    "tideHeight": 1,
+    "timeNow": 0
   },
   "resources": {
     "media": [
