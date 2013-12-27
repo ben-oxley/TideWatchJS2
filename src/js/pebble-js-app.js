@@ -1,24 +1,33 @@
+
 function fetchWeather(latitude, longitude) {
   var response;
   var req = new XMLHttpRequest();
+  console.log("open");
+  latitude = 37.8;
+  longitude = -122;
   //http://api.wunderground.com/api/f6d48f234e3e919c/tide/q/CA/San_Francisco.json
   req.open('GET', "http://api.wunderground.com/api/f6d48f234e3e919c/tide/q/"
   + latitude + "," + longitude + ".json", true); //CA/San_Francisco
   req.onload = function(e) {
     if (req.readyState == 4) {
       if(req.status == 200) {
-        console.log(req.responseText);
+        //console.log(req.responseText);
         response = JSON.parse(req.responseText);
         var tideHeight, timeNow, city;
         var i, j;
+        j = 0;
+        console.log("if");
         if (response && response.tide.tideSummary && response.tide.tideSummary.length > 0) {
+          console.log("for");
           for (i = 0; i < response.tide.tideSummary.length; i++) {
             var weatherResult = response.tide.tideSummary[i];
             tideHeight = weatherResult.data.height;
-            timeNow = Math.int(weatherResult.utcdate.epoch);
-            timeNow = "1";
+            timeNow = Number(weatherResult.utcdate.epoch);
+            //timeNow = "1";
             city = weatherResult.date.tzname;
-            if (tideHeight != "") {
+            if (tideHeight !== "") {
+              j++;
+              if (j > 4) break;
               console.log(tideHeight);
               console.log(timeNow);
               console.log(city);
@@ -26,6 +35,9 @@ function fetchWeather(latitude, longitude) {
                 "timeNow":timeNow,
                 "tideHeight":tideHeight + "\u00B0C",
                 "city":city});
+              
+            }
+            
           }
         }
 

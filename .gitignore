@@ -18,3 +18,9 @@
 build/.wafpickle-darwin-34014704-98
 
 *.elf
+
+*.pbpack
+
+*.manifest
+
+*.bin
