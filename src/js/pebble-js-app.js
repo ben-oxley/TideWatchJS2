@@ -29,14 +29,18 @@ function fetchWeather(latitude, longitude) {
             city = weatherResult.date.tzname;
             if (tideHeight !== "") {
               j++;
-              if (j > 4) break;
+              if (j > 1) break; //Only send one for now
               fTideHeight = parseFloat(tideHeight.substr(0,tideHeight.search(" ft")));
               fTideHeight *= FEET_TO_MM;
               iTideHeight = Math.round(fTideHeight);
+              var dt = new Date(timeNow*1000);
+              console.log(dt);
+              console.log(dt.getSeconds() + (60 * dt.getMinutes()) + (60 * 60 * dt.getHours()));
               console.log(iTideHeight);
               console.log(tideHeight);
               console.log(timeNow);
               console.log(city);
+              timeNow = dt.getSeconds() + (60 * dt.getMinutes()) + (60 * 60 * dt.getHours());
               Pebble.sendAppMessage({
                 "timeNow":timeNow,
                 "tideHeight":iTideHeight + "\u00B0C",
