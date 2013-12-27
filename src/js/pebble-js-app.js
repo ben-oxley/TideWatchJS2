@@ -5,6 +5,7 @@ function fetchWeather(latitude, longitude) {
   console.log("open");
   latitude = 37.8;
   longitude = -122;
+  FEET_TO_MM = 305;
   //http://api.wunderground.com/api/f6d48f234e3e919c/tide/q/CA/San_Francisco.json
   req.open('GET', "http://api.wunderground.com/api/f6d48f234e3e919c/tide/q/"
   + latitude + "," + longitude + ".json", true); //CA/San_Francisco
@@ -14,6 +15,7 @@ function fetchWeather(latitude, longitude) {
         //console.log(req.responseText);
         response = JSON.parse(req.responseText);
         var tideHeight, timeNow, city;
+        var fTideHeight, iTideHeight;
         var i, j;
         j = 0;
         console.log("if");
@@ -28,12 +30,16 @@ function fetchWeather(latitude, longitude) {
             if (tideHeight !== "") {
               j++;
               if (j > 4) break;
+              fTideHeight = parseFloat(tideHeight.substr(0,tideHeight.search(" ft")));
+              fTideHeight *= FEET_TO_MM;
+              iTideHeight = Math.round(fTideHeight);
+              console.log(iTideHeight);
               console.log(tideHeight);
               console.log(timeNow);
               console.log(city);
               Pebble.sendAppMessage({
                 "timeNow":timeNow,
-                "tideHeight":tideHeight + "\u00B0C",
+                "tideHeight":iTideHeight + "\u00B0C",
                 "city":city});
               
             }

@@ -14,6 +14,9 @@ const uint32_t FEET_TO_MM = 305;
 uint32_t timeArr[4];
 uint32_t heightArr[4];
 
+
+
+
 static void update_tide_array(uint32_t addHeight);
 static void update_time_array(uint32_t addTime);
 
@@ -38,8 +41,6 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
   uint32_t tempHeight;
   uint32_t tempTime;
   char* sTempHeight;
-  char* sTupleHeight;
-  sTupleHeight = (char*)malloc(sizeof(char) * 10);
   sTempHeight = (char*)malloc(sizeof(char) * 10);
   switch (key) {
     case WEATHER_TIME_KEY:
@@ -53,11 +54,13 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       break;
 
     case WEATHER_TIDE_KEY:
+      
       // App Sync keeps new_tuple in sync_buffer, so we may use it directly
-      strcpy(sTupleHeight,new_tuple->value->cstring);
-      strncpy(sTempHeight,sTupleHeight,strlen(sTupleHeight)-3);
+      strcpy(sTempHeight ,new_tuple->value->cstring);
       tempHeight = atoi(sTempHeight);
+      APP_LOG(APP_LOG_LEVEL_INFO,"Tide Height in MM: %ld",tempHeight);
       update_tide_array(tempHeight);
+      snprintf(sTempHeight,10,"%ldmm",tempHeight);
       text_layer_set_text(temperature_layer, sTempHeight);
       break;
 
@@ -67,7 +70,6 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
   }
   
   free(sTempHeight);
-  free(sTupleHeight);
 }
 
 static void update_tide_array(uint32_t addHeight) {
