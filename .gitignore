@@ -24,3 +24,17 @@ build/.wafpickle-darwin-34014704-98
 *.manifest
 
 *.bin
+
+*.pbpack
+
+*.manifest
+
+*.bin
+
+*.elf
+
+*.map
+
+*.bin
+
+*.o

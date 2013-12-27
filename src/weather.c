@@ -9,8 +9,13 @@ static GBitmap *icon_bitmap = NULL;
 
 static AppSync sync;
 static uint8_t sync_buffer[64];
-
+static uint8_t bufferPos = 0;
 const uint32_t FEET_TO_MM = 305;
+uint32_t timeArr[4];
+uint32_t heightArr[4];
+
+static void update_tide_array(uint32_t addHeight);
+static void update_time_array(uint32_t addTime);
 
 enum WeatherKey {
   WEATHER_TIME_KEY = 0x0,         // TUPLE_INT
@@ -30,24 +35,53 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
 }
 
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
+  uint32_t tempHeight;
+  uint32_t tempTime;
+  char* sTempHeight;
+  char* sTupleHeight;
+  sTupleHeight = (char*)malloc(sizeof(char) * 10);
+  sTempHeight = (char*)malloc(sizeof(char) * 10);
   switch (key) {
     case WEATHER_TIME_KEY:
       if (icon_bitmap) {
         gbitmap_destroy(icon_bitmap);
       }
-      icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint8]);
-      bitmap_layer_set_bitmap(icon_layer, icon_bitmap);
+      tempTime = new_tuple->value->uint32;
+      update_time_array(tempTime);
+      //icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint8]);
+      //bitmap_layer_set_bitmap(icon_layer, icon_bitmap);
       break;
 
     case WEATHER_TIDE_KEY:
       // App Sync keeps new_tuple in sync_buffer, so we may use it directly
-      text_layer_set_text(temperature_layer, new_tuple->value->cstring);
+      strcpy(sTupleHeight,new_tuple->value->cstring);
+      strncpy(sTempHeight,sTupleHeight,strlen(sTupleHeight)-3);
+      tempHeight = atoi(sTempHeight);
+      update_tide_array(tempHeight);
+      text_layer_set_text(temperature_layer, sTempHeight);
       break;
 
     case WEATHER_CITY_KEY:
       text_layer_set_text(city_layer, new_tuple->value->cstring);
       break;
   }
+  
+  free(sTempHeight);
+  free(sTupleHeight);
+}
+
+static void update_tide_array(uint32_t addHeight) {
+  heightArr[bufferPos] = addHeight;
+  bufferPos++;
+  if (bufferPos> 3) {
+    bufferPos = 0;
+    //Call update graph;
+  }
+
+}
+
+static void update_time_array(uint32_t addTime) {
+  timeArr[bufferPos] = addTime;
 }
 
 static void send_cmd(void) {
