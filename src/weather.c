@@ -40,23 +40,16 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
   uint32_t tempHeight;
   uint32_t tempTime;
-  //char* sTempTime;
   char* sTempHeight;
   sTempHeight = (char*)malloc(sizeof(char) * 10);
-  //sTempTime = (char*)malloc(sizeof(char) * 10);
   switch (key) {
     case WEATHER_TIME_KEY:
-      //strcpy(sTempTime,new_tuple->value->cstring);
-      //tempTime = atol(sTempTime);
       tempTime = new_tuple->value->uint32;
       APP_LOG(APP_LOG_LEVEL_INFO,"Timestamp: %ld",tempTime);
       update_time_array(tempTime);
-      //icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[new_tuple->value->uint8]);
-      //bitmap_layer_set_bitmap(icon_layer, icon_bitmap);
       break;
 
     case WEATHER_TIDE_KEY:
-      
       // App Sync keeps new_tuple in sync_buffer, so we may use it directly
       strcpy(sTempHeight ,new_tuple->value->cstring);
       tempHeight = atoi(sTempHeight);
