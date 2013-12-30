@@ -1,4 +1,13 @@
-  
+//Created by Ben Oxley - www.benoxley.com - www.github.com/ben-oxley
+//December 2013
+//This project is an implementation of a live-updating tide watch face
+//for the Pebble watch developed originally for v1.12 and upgraded to a full
+//working version for v2.0 software.
+
+//Good example project at github:
+//https://github.com/pebble-hacks/pebble-faces/blob/master/src/js/pebble-js-app.js
+//also here: http://developer.getpebble.com/2/guides/javascript-guide.html
+//and here: https://developer.getpebble.com/blog/2013/12/20/Pebble-Javascript-Tips-and-Tricks/
 var response;
 var req = new XMLHttpRequest();
 
@@ -15,6 +24,7 @@ function fetchWeather(latitude, longitude) {
   //http://api.wunderground.com/api/f6d48f234e3e919c/tide/q/CA/San_Francisco.json
   req.open('GET', "http://api.wunderground.com/api/f6d48f234e3e919c/tide/q/"
   + latitude + "," + longitude + ".json", true); //CA/San_Francisco
+  //an example file: http://api.wunderground.com/api/f6d48f234e3e919c/tide/q/37.8,-122.json
   req.onload = function(e) {
     if (req.readyState == 4) {
       if(req.status == 200) {

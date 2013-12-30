@@ -4,8 +4,36 @@
 		"selected_items":
 		[
 			[
+				"send",
+				"sendBytes"
+			],
+			[
+				"a",
+				"atoi"
+			],
+			[
 				"tide",
-				"tide"
+				"tideHeight"
+			],
+			[
+				"tem",
+				"tempHeight"
+			],
+			[
+				"un",
+				"uint32"
+			],
+			[
+				"add",
+				"addTime"
+			],
+			[
+				"temp",
+				"tempHeight"
+			],
+			[
+				"uint",
+				"uint32_t"
 			],
 			[
 				"wea",
@@ -35,15 +63,15 @@
 			"file": "src/weather.c",
 			"settings":
 			{
-				"buffer_size": 3981,
+				"buffer_size": 4738,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/Users/ben/TideWatchJS/src/js/pebble-js-app._js_old.js",
+			"file": "appinfo.json",
 			"settings":
 			{
-				"buffer_size": 2610,
+				"buffer_size": 770,
 				"line_ending": "Unix"
 			}
 		},
@@ -51,7 +79,7 @@
 			"file": "src/js/pebble-js-app.js",
 			"settings":
 			{
-				"buffer_size": 2705,
+				"buffer_size": 3207,
 				"line_ending": "Unix"
 			}
 		}
@@ -84,6 +112,9 @@
 	},
 	"file_history":
 	[
+		"/Users/ben/pebble-dev/PebbleSDK-2.0-BETA4/Examples/watchfaces/simplicity/src/simplicity.c",
+		"/Users/ben/pebble-dev/PebbleSDK-2.0-BETA4/Examples/pebblekit-js/weather/src/js/pebble-js-app.js",
+		"/Users/ben/TideWatchJS/src/js/pebble-js-app._js_old.js",
 		"/Users/ben/WeatherWatch/pythontest/readjson.py",
 		"/Users/ben/pebble-dev/PebbleSDK-2.0-BETA1/Examples/watchfaces/tide_watch/src/tide_watch.c",
 		"/Users/ben/Desktop/testa/test.c",
@@ -105,6 +136,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"WEATHER_TEMPERATURE_KEY",
+			"WEATHER_ICON_KEY",
 			"int"
 		],
 		"highlight": true,
@@ -113,6 +146,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			"WEATHER_TIDE_KEY",
+			"WEATHER_TIME_KEY",
 			"long"
 		],
 		"reverse": false,
@@ -124,7 +159,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -132,15 +167,15 @@
 					"file": "src/weather.c",
 					"settings":
 					{
-						"buffer_size": 3981,
+						"buffer_size": 4738,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								299,
-								299
+								1807,
+								1807
 							]
 						],
 						"settings":
@@ -150,30 +185,30 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 640.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "/Users/ben/TideWatchJS/src/js/pebble-js-app._js_old.js",
+					"file": "appinfo.json",
 					"settings":
 					{
-						"buffer_size": 2610,
+						"buffer_size": 770,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								816,
-								816
+								317,
+								317
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"syntax": "Packages/JavaScript/JSON.tmLanguage",
 							"tab_size": 2,
 							"translate_tabs_to_spaces": true
 						},
@@ -194,15 +229,15 @@
 					"file": "src/js/pebble-js-app.js",
 					"settings":
 					{
-						"buffer_size": 2705,
+						"buffer_size": 3207,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								493,
-								493
+								825,
+								825
 							]
 						],
 						"settings":
@@ -212,7 +247,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1040.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
