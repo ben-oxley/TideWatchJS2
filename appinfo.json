@@ -11,7 +11,8 @@
   "appKeys": {
     "city": 2,
     "tideHeight": 1,
-    "timeNow": 0
+    "timeNow": 0,
+    "position": 3
   },
   "resources": {
     "media": [

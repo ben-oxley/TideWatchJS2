@@ -17,13 +17,15 @@ uint32_t heightArr[4];
 
 
 
+
 static void update_tide_array(uint32_t addHeight);
 static void update_time_array(uint32_t addTime);
 
 enum WeatherKey {
-  WEATHER_TIME_KEY = 0x0,         // TUPLE_INT
+  WEATHER_TIME_KEY = 0x0,         // TUPLE_UINT32
   WEATHER_TIDE_KEY = 0x1,         // TUPLE_CSTRING
   WEATHER_CITY_KEY = 0x2,         // TUPLE_CSTRING
+  WEATHER_POSN_KEY = 0x3          // TUPLE_INT
 };
 
 static const uint32_t WEATHER_ICONS[] = {
@@ -62,6 +64,10 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
     case WEATHER_CITY_KEY:
       text_layer_set_text(city_layer, new_tuple->value->cstring);
       break;
+
+    case WEATHER_POSN_KEY:
+      bufferPos = new_tuple->value->uint8_t;
+      break;
   }
   
   free(sTempHeight);
@@ -69,11 +75,8 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 
 static void update_tide_array(uint32_t addHeight) {
   heightArr[bufferPos] = addHeight;
-  bufferPos++;
-  if (bufferPos> 3) {
-    bufferPos = 0;
+
     //Call update graph;
-  }
 
 }
 
