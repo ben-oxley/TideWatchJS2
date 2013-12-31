@@ -9,14 +9,14 @@
 //also here: http://developer.getpebble.com/2/guides/javascript-guide.html
 //and here: https://developer.getpebble.com/blog/2013/12/20/Pebble-Javascript-Tips-and-Tricks/
 var response;
-var req = new XMLHttpRequest();
-
+var req;
 var tideHeight, timeNow, city;
 var fTideHeight, iTideHeight;
 var i, j;
 
 
 function fetchWeather(latitude, longitude) {
+  req = new XMLHttpRequest();
   console.log("open");
   latitude = 37.8;
   longitude = -122;
@@ -93,10 +93,10 @@ function locationSuccess(pos) {
 
 function locationError(err) {
   console.warn('location error (' + err.code + '): ' + err.message);
-  Pebble.sendAppMessage({
-    "city":"Loc Unavailable",
-    "tideHeight":"N/A"
-  });
+  //Pebble.sendAppMessage({
+  //  "city":"Loc Unavailable",
+  //  "tideHeight":"N/A"
+  //});
 }
 
 var locationOptions = { "timeout": 15000, "maximumAge": 60000 }; 

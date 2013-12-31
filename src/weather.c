@@ -8,7 +8,8 @@ static BitmapLayer *icon_layer;
 static GBitmap *icon_bitmap = NULL;
 
 static AppSync sync;
-static uint8_t sync_buffer[64];
+#define SYNC_BUFFER_SIZE 120
+static uint8_t sync_buffer[SYNC_BUFFER_SIZE];
 static uint8_t bufferPos = 0;
 const uint32_t FEET_TO_MM = 305;
 uint32_t timeArr[4];
@@ -22,10 +23,10 @@ static void update_tide_array(uint32_t addHeight);
 static void update_time_array(uint32_t addTime);
 
 enum WeatherKey {
-  WEATHER_TIME_KEY = 0x0,         // TUPLE_UINT32
-  WEATHER_TIDE_KEY = 0x1,         // TUPLE_CSTRING
-  WEATHER_CITY_KEY = 0x2,         // TUPLE_CSTRING
-  WEATHER_POSN_KEY = 0x3          // TUPLE_INT
+  WEATHER_POSN_KEY = 0x0,          // TUPLE_UINT8
+  WEATHER_TIME_KEY = 0x1,         // TUPLE_UINT32
+  WEATHER_TIDE_KEY = 0x2,         // TUPLE_CSTRING
+  WEATHER_CITY_KEY = 0x3         // TUPLE_CSTRING
 };
 
 static const uint32_t WEATHER_ICONS[] = {
@@ -66,7 +67,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       break;
 
     case WEATHER_POSN_KEY:
-      bufferPos = new_tuple->value->uint8_t;
+      bufferPos = new_tuple->value->uint8;
       break;
   }
   
@@ -106,14 +107,14 @@ static void window_load(Window *window) {
   icon_layer = bitmap_layer_create(GRect(32, 10, 80, 80));
   layer_add_child(window_layer, bitmap_layer_get_layer(icon_layer));
 
-  temperature_layer = text_layer_create(GRect(0, 95, 144, 68));
+  temperature_layer = text_layer_create(GRect(0, 70, 144, 68));
   text_layer_set_text_color(temperature_layer, GColorWhite);
   text_layer_set_background_color(temperature_layer, GColorClear);
   text_layer_set_font(temperature_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   text_layer_set_text_alignment(temperature_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(temperature_layer));
 
-  city_layer = text_layer_create(GRect(0, 125, 144, 68));
+  city_layer = text_layer_create(GRect(0, 100, 144, 80));
   text_layer_set_text_color(city_layer, GColorWhite);
   text_layer_set_background_color(city_layer, GColorClear);
   text_layer_set_font(city_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
@@ -153,8 +154,8 @@ static void init(void) {
     .unload = window_unload
   });
 
-  const int inbound_size = 64;
-  const int outbound_size = 64;
+  const int inbound_size = SYNC_BUFFER_SIZE;
+  const int outbound_size = SYNC_BUFFER_SIZE;
   app_message_open(inbound_size, outbound_size);
 
   const bool animated = true;
