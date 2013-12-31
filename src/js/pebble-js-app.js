@@ -48,7 +48,7 @@ function sendBytes(startpos) {
   console.log("Starting Transmission");
   i = startpos;
   if (startpos < response.tide.tideSummary.length) {
-    for (i = 0; i < response.tide.tideSummary.length; i++) {
+    for (i = startpos; i < response.tide.tideSummary.length; i++) {
       var weatherResult = response.tide.tideSummary[i];
       tideHeight = weatherResult.data.height;
       timeNow = Number(weatherResult.utcdate.epoch);
@@ -56,7 +56,7 @@ function sendBytes(startpos) {
       city = weatherResult.date.tzname;
       if (tideHeight !== "") {
         j++;
-        if (j > 1) break; //Only send one for now
+        if (j > 4) break; //Only send four for now
         fTideHeight = parseFloat(tideHeight.substr(0,tideHeight.search(" ft")));
         fTideHeight *= FEET_TO_MM;
         iTideHeight = Math.round(fTideHeight);
@@ -67,13 +67,15 @@ function sendBytes(startpos) {
         console.log(tideHeight);
         console.log(timeNow);
         console.log(city);
+        console.log(j-1);
         timeNow = dt.getSeconds() + (60 * dt.getMinutes()) + (60 * 60 * dt.getHours());
         Pebble.sendAppMessage({
-          "position":j,
+          "position":j-1,
           "timeNow":timeNow,
-          "tideHeight":iTideHeight + "\u00B0C",
+          "tideHeight":iTideHeight + " ",
           "city":city
-        },sendBytes(i+1),sendFail);
+        },sendBytes(i+1),100,sendFail);
+        
         break;
       }
     }
@@ -82,7 +84,7 @@ function sendBytes(startpos) {
 
 function sendFail(error) {
 
-
+  console.warn('error in sending packets');
 
 }
 

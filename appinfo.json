@@ -9,10 +9,10 @@
     "watchface": false
   },
   "appKeys": {
-    "city": 3,
-    "tideHeight": 2,
+    "position": 0,    
     "timeNow": 1,
-    "position": 0
+    "tideHeight": 2,
+    "city": 3
   },
   "resources": {
     "media": [

@@ -10,7 +10,7 @@ static GBitmap *icon_bitmap = NULL;
 static AppSync sync;
 #define SYNC_BUFFER_SIZE 120
 static uint8_t sync_buffer[SYNC_BUFFER_SIZE];
-static uint8_t bufferPos = 0;
+static uint32_t bufferPos = 0;
 const uint32_t FEET_TO_MM = 305;
 uint32_t timeArr[4];
 uint32_t heightArr[4];
@@ -47,7 +47,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
   sTempHeight = (char*)malloc(sizeof(char) * 10);
   switch (key) {
     case WEATHER_TIME_KEY:
-      tempTime = new_tuple->value->uint32;
+      tempTime = new_tuple->value->int32;
       APP_LOG(APP_LOG_LEVEL_INFO,"Timestamp: %ld",tempTime);
       update_time_array(tempTime);
       break;
@@ -64,10 +64,12 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 
     case WEATHER_CITY_KEY:
       text_layer_set_text(city_layer, new_tuple->value->cstring);
+      APP_LOG(APP_LOG_LEVEL_INFO,"City: %s",new_tuple->value->cstring);
       break;
 
     case WEATHER_POSN_KEY:
-      bufferPos = new_tuple->value->uint8;
+      bufferPos = new_tuple->value->int32;
+      APP_LOG(APP_LOG_LEVEL_INFO,"BufferPosition: %ld",bufferPos);
       break;
   }
   
@@ -76,13 +78,15 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 
 static void update_tide_array(uint32_t addHeight) {
   heightArr[bufferPos] = addHeight;
-
+      APP_LOG(APP_LOG_LEVEL_INFO,"Logged Height to BufferPosition: %ld",bufferPos);
     //Call update graph;
 
 }
 
 static void update_time_array(uint32_t addTime) {
   timeArr[bufferPos] = addTime;
+
+ APP_LOG(APP_LOG_LEVEL_INFO,"Logged time to BufferPosition: %ld",bufferPos);
 }
 
 static void send_cmd(void) {
@@ -122,8 +126,9 @@ static void window_load(Window *window) {
   layer_add_child(window_layer, text_layer_get_layer(city_layer));
 
   Tuplet initial_values[] = {
-    TupletInteger(WEATHER_TIME_KEY, (uint8_t) 1),
-    TupletCString(WEATHER_TIDE_KEY, "1234\u00B0C"),
+    TupletInteger(WEATHER_POSN_KEY, 0),
+    TupletInteger(WEATHER_TIME_KEY, 1),
+    TupletCString(WEATHER_TIDE_KEY, "1234 ft"),
     TupletCString(WEATHER_CITY_KEY, "St Pebblesburg"),
   };
 
