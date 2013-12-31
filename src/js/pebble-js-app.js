@@ -74,8 +74,18 @@ function sendBytes(startpos) {
           "timeNow":timeNow,
           "tideHeight":iTideHeight + " ",
           "city":city
-        },sendBytes(i+1),100,sendFail);
-        
+        },
+          function(e) {
+            console.log("Successfully delivered message with transactionId="
+              + e.data.transactionId);
+            sendBytes(i+1);
+          },
+          function(e) {
+            console.log("Unable to deliver message with transactionId="
+              + e.data.transactionId
+              + " Error is: " + e.error.message);
+          }
+          )
         break;
       }
     }

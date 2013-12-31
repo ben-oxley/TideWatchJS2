@@ -29,13 +29,6 @@ enum WeatherKey {
   WEATHER_CITY_KEY = 0x3         // TUPLE_CSTRING
 };
 
-static const uint32_t WEATHER_ICONS[] = {
-  RESOURCE_ID_IMAGE_SUN, //0
-  RESOURCE_ID_IMAGE_CLOUD, //1
-  RESOURCE_ID_IMAGE_RAIN, //2
-  RESOURCE_ID_IMAGE_SNOW //3
-};
-
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %d", app_message_error);
 }
