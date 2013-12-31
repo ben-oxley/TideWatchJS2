@@ -4,6 +4,7 @@ static Window *window;
 
 static TextLayer *temperature_layer;
 static TextLayer *city_layer;
+static Layer *line_layer;
 static BitmapLayer *icon_layer;
 static GBitmap *icon_bitmap = NULL;
 
@@ -16,15 +17,18 @@ uint32_t timeArr[4];
 uint32_t heightArr[4];
 
 
+#define MAX_ANGLE   0x10000
 
 
 
+
+int32_t tide_calc(time_t);
 static void update_tide_array(uint32_t addHeight);
 static void update_time_array(uint32_t addTime);
 
 enum WeatherKey {
-  WEATHER_POSN_KEY = 0x0,          // TUPLE_UINT8
-  WEATHER_TIME_KEY = 0x1,         // TUPLE_UINT32
+  WEATHER_POSN_KEY = 0x0,          // TUPLE_INT32
+  WEATHER_TIME_KEY = 0x1,         // TUPLE_INT32
   WEATHER_TIDE_KEY = 0x2,         // TUPLE_CSTRING
   WEATHER_CITY_KEY = 0x3         // TUPLE_CSTRING
 };
@@ -82,6 +86,32 @@ static void update_time_array(uint32_t addTime) {
  APP_LOG(APP_LOG_LEVEL_INFO,"Logged time to BufferPosition: %ld",bufferPos);
 }
 
+void line_layer_update_callback(Layer *layer, GContext* ctx) {
+
+  graphics_context_set_fill_color(ctx, GColorWhite);
+  int i = 0;
+  int magnitude=0;
+  graphics_context_set_stroke_color(ctx, GColorWhite);
+  for (i = 0;i<120;i++) {
+    magnitude = 10.0*sin_lookup(MAX_ANGLE*i/100)/MAX_ANGLE;
+    //magnitude = tide_calc(now + i*360)/20;
+    //if (i < 2*second_angle) {
+      
+    if ( (i%10) > 5) {
+      
+      graphics_draw_line(ctx, GPoint(i, 50), GPoint(i, 50-2*magnitude));
+    } else {
+      if ( (i%2) > 0) {
+      graphics_draw_line(ctx, GPoint(i, 50), GPoint(i, 50-magnitude));
+      }
+    }
+    
+  
+      graphics_draw_line(ctx, GPoint(i, 51-2*magnitude), GPoint(i, 50-2*magnitude));
+  }
+
+}
+
 static void send_cmd(void) {
   Tuplet value = TupletInteger(1, 1);
 
@@ -117,6 +147,10 @@ static void window_load(Window *window) {
   text_layer_set_font(city_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
   text_layer_set_text_alignment(city_layer, GTextAlignmentCenter);
   layer_add_child(window_layer, text_layer_get_layer(city_layer));
+
+  line_layer = layer_create(GRect(0, 0, 144, 100));
+  layer_set_update_proc(line_layer, line_layer_update_callback);
+  layer_add_child(window_layer, line_layer);
 
   Tuplet initial_values[] = {
     TupletInteger(WEATHER_POSN_KEY, 0),

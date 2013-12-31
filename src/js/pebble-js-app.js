@@ -57,6 +57,7 @@ function sendBytes(startpos) {
       if (tideHeight !== "") {
         j++;
         if (j > 4) break; //Only send four for now
+        //TODO - Clean data on success
         fTideHeight = parseFloat(tideHeight.substr(0,tideHeight.search(" ft")));
         fTideHeight *= FEET_TO_MM;
         iTideHeight = Math.round(fTideHeight);
@@ -95,7 +96,7 @@ function sendBytes(startpos) {
 function sendFail(error) {
 
   console.warn('error in sending packets');
-
+//TODO - clean data on fail
 }
 
 function locationSuccess(pos) {
