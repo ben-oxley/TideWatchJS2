@@ -9,12 +9,15 @@ static BitmapLayer *icon_layer;
 static GBitmap *icon_bitmap = NULL;
 
 static AppSync sync;
-#define SYNC_BUFFER_SIZE 120
-static uint8_t sync_buffer[SYNC_BUFFER_SIZE];
-static uint32_t bufferPos = 0;
+#define tide_array_size 4
+#define sync_buffer_size 120
+const int8_t SYNC_BUFFER_SIZE = sync_buffer_size;
+const int8_t TIDE_ARRAY_SIZE = tide_array_size;
+static uint8_t sync_buffer[sync_buffer_size];
+static uint8_t bufferPos = 0;
 const uint32_t FEET_TO_MM = 305;
-uint32_t timeArr[4];
-uint32_t heightArr[4];
+uint32_t timeArr[tide_array_size];
+int32_t heightArr[tide_array_size];
 
 
 #define MAX_ANGLE   0x10000
@@ -38,7 +41,7 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
 }
 
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
-  uint32_t tempHeight;
+  int32_t tempHeight;
   uint32_t tempTime;
   char* sTempHeight;
   sTempHeight = (char*)malloc(sizeof(char) * 10);
@@ -66,7 +69,8 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 
     case WEATHER_POSN_KEY:
       bufferPos = new_tuple->value->int32;
-      APP_LOG(APP_LOG_LEVEL_INFO,"BufferPosition: %ld",bufferPos);
+
+      APP_LOG(APP_LOG_LEVEL_INFO,"BufferPosition: %d",bufferPos);
       break;
   }
   
@@ -74,16 +78,24 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 }
 
 static void update_tide_array(uint32_t addHeight) {
+  if (bufferPos >= TIDE_ARRAY_SIZE) {
+    APP_LOG(APP_LOG_LEVEL_ERROR,"Array indicies out of bounds (%d)",bufferPos);
+    bufferPos = 0;
+  }
   heightArr[bufferPos] = addHeight;
-      APP_LOG(APP_LOG_LEVEL_INFO,"Logged Height to BufferPosition: %ld",bufferPos);
-    //Call update graph;
-
+  APP_LOG(APP_LOG_LEVEL_INFO,"Logged Height to BufferPosition: %d",bufferPos);
+  //Call update graph;
+  if (bufferPos >= TIDE_ARRAY_SIZE - 1) {
+    //All new data has been added, redraw the graph
+    layer_mark_dirty(line_layer);
+  }
 }
 
 static void update_time_array(uint32_t addTime) {
+  //TODO - Check that time is increasing in each element
+  if (bufferPos >= TIDE_ARRAY_SIZE) return;
   timeArr[bufferPos] = addTime;
-
- APP_LOG(APP_LOG_LEVEL_INFO,"Logged time to BufferPosition: %ld",bufferPos);
+  APP_LOG(APP_LOG_LEVEL_INFO,"Logged time to BufferPosition: %d",bufferPos);
 }
 
 void line_layer_update_callback(Layer *layer, GContext* ctx) {
@@ -92,7 +104,8 @@ void line_layer_update_callback(Layer *layer, GContext* ctx) {
   int i = 0;
   int magnitude=0;
   graphics_context_set_stroke_color(ctx, GColorWhite);
-  for (i = 0;i<120;i++) {
+  int32_t range = timeArr[0] - (int32_t)time(NULL);
+  for (i = 0;i<144;i++) {
     magnitude = 10.0*sin_lookup(MAX_ANGLE*i/100)/MAX_ANGLE;
     //magnitude = tide_calc(now + i*360)/20;
     //if (i < 2*second_angle) {
@@ -110,6 +123,19 @@ void line_layer_update_callback(Layer *layer, GContext* ctx) {
       graphics_draw_line(ctx, GPoint(i, 51-2*magnitude), GPoint(i, 50-2*magnitude));
   }
 
+}
+
+static int32_t get_tide_height(uint32_t atTime){
+  int k = 0;
+  for (k = 0; k < TIDE_ARRAY_SIZE - 1; k++) {
+    if (timeArr[k] < atTime && timeArr[k+1] > atTime) break;
+  }
+  if (timeArr[k] < atTime && timeArr[k+1] > atTime) {
+    //return heightArr[k];
+
+  } else {
+    return 0;
+  }
 }
 
 static void send_cmd(void) {
