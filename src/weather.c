@@ -11,6 +11,7 @@ static GBitmap *icon_bitmap = NULL;
 static AppSync sync;
 #define tide_array_size 4
 #define sync_buffer_size 120
+const int8_t LINE_CENTER = 40;
 const int8_t SYNC_BUFFER_SIZE = sync_buffer_size;
 const int8_t TIDE_ARRAY_SIZE = tide_array_size;
 static uint8_t sync_buffer[sync_buffer_size];
@@ -28,6 +29,7 @@ int32_t heightArr[tide_array_size];
 int32_t tide_calc(time_t);
 static void update_tide_array(uint32_t addHeight);
 static void update_time_array(uint32_t addTime);
+static int32_t get_tide_height(uint32_t atTime);
 
 enum WeatherKey {
   WEATHER_POSN_KEY = 0x0,          // TUPLE_INT32
@@ -102,40 +104,67 @@ void line_layer_update_callback(Layer *layer, GContext* ctx) {
 
   graphics_context_set_fill_color(ctx, GColorWhite);
   int i = 0;
-  int magnitude=0;
+  int32_t magnitude=0;
   graphics_context_set_stroke_color(ctx, GColorWhite);
-  int32_t range = timeArr[0] - (int32_t)time(NULL);
+  uint32_t initialTime = time(NULL);
+  uint32_t range = timeArr[TIDE_ARRAY_SIZE-1] - initialTime;
+  uint32_t selectedTime = 0;
+  //TODO - add logging here of times to check it's correct.
   for (i = 0;i<144;i++) {
-    magnitude = 10.0*sin_lookup(MAX_ANGLE*i/100)/MAX_ANGLE;
-    //magnitude = tide_calc(now + i*360)/20;
-    //if (i < 2*second_angle) {
-      
+    if (heightArr[TIDE_ARRAY_SIZE-1] != 0) {
+      //Interpolate, careful on the multiplication order
+      selectedTime = (i*(range/144))+initialTime;
+      //APP_LOG(APP_LOG_LEVEL_INFO,"Time: %lu",selectedTime);
+      magnitude = get_tide_height(selectedTime)/200;
+      //APP_LOG(APP_LOG_LEVEL_INFO,"Tide Height in MM: %ld",magnitude);
+    } else {
+      magnitude = 10.0*sin_lookup(MAX_ANGLE*i/100)/MAX_ANGLE;
+      //magnitude = tide_calc(now + i*360)/20;
+      //if (i < 2*second_angle) {
+    }
     if ( (i%10) > 5) {
-      
-      graphics_draw_line(ctx, GPoint(i, 50), GPoint(i, 50-2*magnitude));
+      graphics_draw_line(ctx, GPoint(i, LINE_CENTER), GPoint(i, LINE_CENTER-2*magnitude));
     } else {
       if ( (i%2) > 0) {
-      graphics_draw_line(ctx, GPoint(i, 50), GPoint(i, 50-magnitude));
+        graphics_draw_line(ctx, GPoint(i, LINE_CENTER), GPoint(i, LINE_CENTER-magnitude));
       }
     }
     
   
-      graphics_draw_line(ctx, GPoint(i, 51-2*magnitude), GPoint(i, 50-2*magnitude));
+      graphics_draw_line(ctx, GPoint(i, LINE_CENTER-2*magnitude), GPoint(i, LINE_CENTER-2*magnitude));
   }
 
 }
-
+//returns tide height in mm
 static int32_t get_tide_height(uint32_t atTime){
   int k = 0;
+  uint32_t timeSplit = 0;
+  int32_t angle = 0;
+  double magnitude = 0;
   for (k = 0; k < TIDE_ARRAY_SIZE - 1; k++) {
     if (timeArr[k] < atTime && timeArr[k+1] > atTime) break;
   }
   if (timeArr[k] < atTime && timeArr[k+1] > atTime) {
+    //APP_LOG(APP_LOG_LEVEL_INFO,"1: %lu, %lu",timeArr[k],timeArr[k+1]);
     //return heightArr[k];
-
-  } else {
-    return 0;
+    timeSplit = timeArr[k+1] - timeArr[k];
+    angle = ((MAX_ANGLE/2)*(atTime - timeArr[k]))/timeSplit;
+    //max return of cos_lookup is 65535
+    magnitude = (double)cos_lookup(angle)/TRIG_MAX_RATIO;
+    //multiply by the magnitude
+    magnitude *= (heightArr[k] - heightArr[k+1]);
+    //shift by the final height
+    magnitude += heightArr[k+1];
+    return (int32_t)magnitude;
+    //move it up or down for the two heights
+  } else if (timeArr[0] > atTime) {
+    //APP_LOG(APP_LOG_LEVEL_INFO,"2: %lu",timeArr[0]);
+    //fit a cos function between the first two datapoints
+  } else if (timeArr[TIDE_ARRAY_SIZE-1] < atTime) {
+    //APP_LOG(APP_LOG_LEVEL_INFO,"3: %lu",timeArr[TIDE_ARRAY_SIZE-1]);
+    //fit a cos function between the last two datapoints
   }
+  return 0;
 }
 
 static void send_cmd(void) {

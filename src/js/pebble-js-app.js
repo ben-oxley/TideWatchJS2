@@ -69,7 +69,7 @@ function sendBytes(startpos) {
         console.log(timeNow);
         console.log(city);
         console.log(j-1);
-        timeNow = dt.getSeconds() + (60 * dt.getMinutes()) + (60 * 60 * dt.getHours());
+        //timeNow = dt.getSeconds() + (60 * dt.getMinutes()) + (60 * 60 * dt.getHours());
         Pebble.sendAppMessage({
           "position":j-1,
           "timeNow":timeNow,
